@@ -8,12 +8,24 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 import model.User;
 
 public class SocketHandle {
     private BufferedWriter outputWriter;
     private Socket socketOfClient;
+    
+    public List<User> getListUser(String[] message) {
+        List<User> friend = new ArrayList<>();
+        for (int i = 1; i < message.length; i = i + 4) {
+            friend.add(new User(Integer.parseInt(message[i]),
+                    message[i + 1],
+                    message[i + 2].equals("1"),
+                    message[i + 3].equals("1")));
+        }
+        return friend;
+    }
     
     public List<User> getListRank(String[] message) {
         List<User> friend = new ArrayList<>();
@@ -116,6 +128,60 @@ public class SocketHandle {
                     if (messageSplit.length == 3)
                         Client.waitingRoomFrm.setRoomPassword(messageSplit[2]);
                 }
+                //Xử lý danh sách bạn bè
+                if (messageSplit[0].equals("return-friend-list")) {
+                    if (Client.friendListFrm != null) {
+                        Client.friendListFrm.updateFriendList(getListUser(messageSplit));
+                    }
+                }
+                //Xử lý khi nhận được yêu cầu thách đấu
+                if (messageSplit[0].equals("duel-notice")) {
+                    int res = JOptionPane.showConfirmDialog(Client.getVisibleJFrame(), "Bạn nhận được lời thách đấu của " + messageSplit[2] + " (ID=" + messageSplit[1] + ")", "Xác nhận thách đấu", JOptionPane.YES_NO_OPTION);
+                    if (res == JOptionPane.YES_OPTION) {
+                        Client.socketHandle.write("agree-duel," + messageSplit[1]);
+                    } else {
+                        Client.socketHandle.write("disagree-duel," + messageSplit[1]);
+                    }
+                }
+                //Xử lý không đồng ý thách đấu
+                if (messageSplit[0].equals("disagree-duel")) {
+                    Client.closeAllViews();
+                    Client.openView(Client.View.HOMEPAGE);
+                    JOptionPane.showMessageDialog(Client.homePageFrm, "Đối thủ không đồng ý thách đấu");
+                }
+                //Vào phòng chơi
+                if (messageSplit[0].equals("go-to-room")) {
+                    System.out.println("Vào phòng");
+                    int roomID = Integer.parseInt(messageSplit[1]);
+                    String competitorIP = messageSplit[2];
+                    int isStart = Integer.parseInt(messageSplit[3]);
+
+                    User competitor = getUserFromString(4, messageSplit);
+                    if (Client.findRoomFrm != null) {
+                        Client.findRoomFrm.showFoundRoom();
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex) {
+                            JOptionPane.showMessageDialog(Client.findRoomFrm, "Lỗi khi sleep thread");
+                        }
+                    } else if (Client.waitingRoomFrm != null) {
+                        Client.waitingRoomFrm.showFoundCompetitor();
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex) {
+                            JOptionPane.showMessageDialog(Client.waitingRoomFrm, "Lỗi khi sleep thread");
+                        }
+                    }
+                    Client.closeAllViews();
+                    System.out.println("Đã vào phòng: " + roomID);
+                    //Xử lý vào phòng
+                    Client.openView(Client.View.GAME_CLIENT
+                            , competitor
+                            , roomID
+                            , isStart
+                            , competitorIP);
+                    Client.gameClientFrm.newgame();
+                }
                 //Xử lý kết quả tìm phòng từ server
                 if (messageSplit[0].equals("room-fully")) {
                     Client.closeAllViews();
@@ -133,6 +199,16 @@ public class SocketHandle {
                     Client.closeAllViews();
                     Client.openView(Client.View.HOMEPAGE);
                     JOptionPane.showMessageDialog(Client.homePageFrm, "Mật khẩu phòng sai");
+                }
+                //Xử lý lấy danh sách phòng
+                if (messageSplit[0].equals("room-list")) {
+                    Vector<String> rooms = new Vector<>();
+                    Vector<String> passwords = new Vector<>();
+                    for (int i = 1; i < messageSplit.length; i = i + 2) {
+                        rooms.add("Phòng " + messageSplit[i]);
+                        passwords.add(messageSplit[i + 1]);
+                    }
+                    Client.roomListFrm.updateRoomList(rooms, passwords);
                 }
             }
         } catch (Exception e) {

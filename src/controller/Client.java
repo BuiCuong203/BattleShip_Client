@@ -1,14 +1,19 @@
 package controller;
 
+import javax.swing.JFrame;
 import model.User;
 import views.CompetitorInfoFrm;
 import views.CreateRoomPasswordFrm;
+import views.FindRoomFrm;
+import views.FriendListFrm;
 import views.FriendRequestFrm;
 import views.GameNoticeFrm;
 import views.HomePageFrm;
+import views.JoinRoomPasswordFrm;
 import views.LoginFrm;
 import views.RankFrm;
 import views.RegisterFrm;
+import views.RoomListFrm;
 import views.RoomNameFrm;
 import views.WaitingRoomFrm;
 
@@ -25,17 +30,39 @@ public class Client {
     public static WaitingRoomFrm waitingRoomFrm;
     public static CreateRoomPasswordFrm createRoomPasswordFrm;
     public static RoomNameFrm roomNameFrm;
+    public static FriendListFrm friendListFrm;
+    public static FindRoomFrm findRoomFrm;
+    public static RoomListFrm roomListFrm;
+    public static JoinRoomPasswordFrm joinRoomPasswordFrm;
     
     public Client() {
+    }
+    
+    public static JFrame getVisibleJFrame() {
+        if (roomListFrm != null && roomListFrm.isVisible())
+            return roomListFrm;
+        if (friendListFrm != null && friendListFrm.isVisible()) {
+            return friendListFrm;
+        }
+        if (createRoomPasswordFrm != null && createRoomPasswordFrm.isVisible()) {
+            return createRoomPasswordFrm;
+        }
+        if (joinRoomPasswordFrm != null && joinRoomPasswordFrm.isVisible()) {
+            return joinRoomPasswordFrm;
+        }
+        if (rankFrm != null && rankFrm.isVisible()) {
+            return rankFrm;
+        }
+        return homePageFrm;
     }
     
     public static void openView(View viewName, int arg1, String arg2) {
         if (viewName != null) {
             switch (viewName) {
-//                case JOIN_ROOM_PASSWORD:
-//                    joinRoomPasswordFrm = new JoinRoomPasswordFrm(arg1, arg2);
-//                    joinRoomPasswordFrm.setVisible(true);
-//                    break;
+                case JOIN_ROOM_PASSWORD:
+                    joinRoomPasswordFrm = new JoinRoomPasswordFrm(arg1, arg2);
+                    joinRoomPasswordFrm.setVisible(true);
+                    break;
                 case FRIEND_REQUEST:
                     friendRequestFrm = new FriendRequestFrm(arg1, arg2);
                     friendRequestFrm.setVisible(true);
@@ -93,6 +120,18 @@ public class Client {
                 case ROOM_NAME_FRM:
                     roomNameFrm = new RoomNameFrm();
                     roomNameFrm.setVisible(true);
+                case FRIEND_LIST:
+                    friendListFrm = new FriendListFrm();
+                    friendListFrm.setVisible(true);
+                    break;
+                case FIND_ROOM:
+                    findRoomFrm = new FindRoomFrm();
+                    findRoomFrm.setVisible(true);
+                    break;
+                case ROOM_LIST:
+                    roomListFrm = new RoomListFrm();
+                    roomListFrm.setVisible(true);
+                    break;
             }
         }
     }
@@ -130,6 +169,19 @@ public class Client {
                 case ROOM_NAME_FRM:
                     roomNameFrm.dispose();
                     break;
+                case FRIEND_LIST:
+                    friendListFrm.stopAllThread();
+                    friendListFrm.dispose();
+                case FIND_ROOM:
+                    findRoomFrm.stopAllThread();
+                    findRoomFrm.dispose();
+                    break;
+                case ROOM_LIST:
+                    roomListFrm.dispose();
+                    break;
+                case JOIN_ROOM_PASSWORD:
+                    joinRoomPasswordFrm.dispose();
+                    break;
             }
         }
     }
@@ -145,6 +197,16 @@ public class Client {
         if (waitingRoomFrm != null) waitingRoomFrm.dispose();
         if (createRoomPasswordFrm != null) createRoomPasswordFrm.dispose();
         if (roomNameFrm != null) roomNameFrm.dispose();
+        if (friendListFrm != null) {
+            friendListFrm.stopAllThread();
+            friendListFrm.dispose();
+        }
+        if (findRoomFrm != null) {
+            findRoomFrm.stopAllThread();
+            findRoomFrm.dispose();
+        }
+        if (roomListFrm != null) roomListFrm.dispose();
+        if (joinRoomPasswordFrm != null) joinRoomPasswordFrm.dispose();
     }
     
     public static void main(String[] args) {
@@ -168,6 +230,10 @@ public class Client {
         FRIEND_REQUEST,
         WAITING_ROOM,
         CREATE_ROOM_PASSWORD,
-        ROOM_NAME_FRM
+        ROOM_NAME_FRM,
+        FRIEND_LIST,
+        FIND_ROOM,
+        ROOM_LIST,
+        JOIN_ROOM_PASSWORD
     }
 }

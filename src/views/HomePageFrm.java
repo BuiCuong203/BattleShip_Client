@@ -366,13 +366,13 @@ public class HomePageFrm extends javax.swing.JFrame {
 
     private void quickGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quickGameButtonActionPerformed
         Client.closeView(Client.View.HOMEPAGE);
-//        Client.openView(Client.View.FIND_ROOM);
+        Client.openView(Client.View.FIND_ROOM);
     }//GEN-LAST:event_quickGameButtonActionPerformed
 
     private void findRoomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findRoomButtonActionPerformed
         try {
             Client.closeView(Client.View.HOMEPAGE);
-//            Client.openView(Client.View.ROOM_LIST);
+            Client.openView(Client.View.ROOM_LIST);
             Client.socketHandle.write("view-room-list,");
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
@@ -399,7 +399,7 @@ public class HomePageFrm extends javax.swing.JFrame {
 
     private void friendListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_friendListButtonActionPerformed
         Client.closeView(Client.View.HOMEPAGE);
-//        Client.openView(Client.View.FRIEND_LIST);
+        Client.openView(Client.View.FRIEND_LIST);
     }//GEN-LAST:event_friendListButtonActionPerformed
 
     private void createRoomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createRoomButtonActionPerformed

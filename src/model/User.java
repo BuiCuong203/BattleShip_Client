@@ -22,6 +22,13 @@ public class User {
         this.numberOfDraw = numberOfDraw;
         this.rank = rank;
     }
+    
+    public User(int ID, String nickname, boolean online, boolean playing) {
+        this.ID = ID;
+        this.nickname = nickname;
+        this.online = online;
+        this.playing = playing;
+    }
 
     public int getID() {
         return ID;
